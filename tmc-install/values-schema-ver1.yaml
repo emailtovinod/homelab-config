@@ -15,9 +15,9 @@ contourEnvoy:
   #  loadBalancerClass: local
 oidc:
   issuerType: pinniped
-  issuerURL: https://dev-05141851.okta.com/oauth2/default
-  clientID: 0oaagwv2m9S3BZh3j5d7
-  clientSecret: kmZ3Xa7cbhs2re7sGtXDurxXQk6ik-M-0JizFyTtz3zYtaG3xs4x8ELgvwECNI2T
+  issuerURL: 
+  clientID: 
+  clientSecret: 
 trustedCAs:
   local-ca.pem: |
     -----BEGIN CERTIFICATE-----
@@ -83,7 +83,7 @@ alertmanager: # needed only if you want to turn on alerting
   criticalAlertReceiver:
     slack_configs:
     - send_resolved: false
-      api_url: https://hooks.slack.com/services/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
+      api_url: 
       channel: ' #tmc-test'
 telemetry:
   ceipOptIn: true
