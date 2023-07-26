@@ -1,0 +1,91 @@
+harborProject: hl-harbor.homelab.tanzu/tmc-smrepo
+dnsZone: tmc.homelab.tanzu
+clusterIssuer: ca-issuer
+postgres:
+  userPassword: VMware123
+  maxConnections: 300
+minio:
+  username: root
+  password: VMware123
+contourEnvoy:
+  serviceType: LoadBalancer
+  serviceAnnotations: # needed only when specifying load balancer controller specific config like preferred IP
+    ako.vmware.com/load-balancer-ip: "10.0.200.20"
+  # when using an auto-assigned IP instead of a preferred IP, please use the following key instead of the serviceAnnotations above
+  #  loadBalancerClass: local
+oidc:
+  issuerType: pinniped
+  issuerURL: https://dev-05141851.okta.com/oauth2/default
+  clientID: 0oaagwv2m9S3BZh3j5d7
+  clientSecret: kmZ3Xa7cbhs2re7sGtXDurxXQk6ik-M-0JizFyTtz3zYtaG3xs4x8ELgvwECNI2T
+trustedCAs:
+  local-ca.pem: |
+    -----BEGIN CERTIFICATE-----
+    MIID4zCCAsugAwIBAgIUbELEpwj5i7TzRV7DnT9PNlBnzhwwDQYJKoZIhvcNAQEL
+    BQAwgYAxCzAJBgNVBAYTAklOMQswCQYDVQQIDAJLQTEMMAoGA1UEBwwDQkxSMQww
+    CgYDVQQKDANWTVcxCzAJBgNVBAsMAlBTMRowGAYDVQQDDBF0bWMuaG9tZWxhYi50
+    YW56dTEfMB0GCSqGSIb3DQEJARYQdmFsZXhAdm13YXJlLmNvbTAeFw0yMzA3MjMw
+    OTM0NThaFw0yOTAzMDEwOTM0NThaMIGAMQswCQYDVQQGEwJJTjELMAkGA1UECAwC
+    S0ExDDAKBgNVBAcMA0JMUjEMMAoGA1UECgwDVk1XMQswCQYDVQQLDAJQUzEaMBgG
+    A1UEAwwRdG1jLmhvbWVsYWIudGFuenUxHzAdBgkqhkiG9w0BCQEWEHZhbGV4QHZt
+    d2FyZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCVIGUsXbC7
+    cZb6/4wMDgfYaAWfL4MUYgBGqdRhzoBEE/oRDDg5qGSwrh7lwWxaybKIZicWKSIQ
+    ujggL38gW6Qfd0Rp7jQWmVXTaIsyy1rQiKaGDSWNUoM/HAPNmBR1pnvSFTaTyQb4
+    d+Db/kRBSLed7rtUGiyt91mX1AUHlaVK1gNLgJDOPI1aZJ/9n53n/M61iDAfgN3I
+    btA4yWsvlv6eVBzH0nfH/TXurUDKh5aV5AEgi3fV+dO6IYB13xz4b2s3HK7WCpsY
+    T+ZxFXTN73AEIYYbh58iyRN3TS5ypTe5ci7Pdni5aYUhtBURIcaWTAnhM5fr2umH
+    JY7vWWzPH74XAgMBAAGjUzBRMB0GA1UdDgQWBBRLNwYkiwbZJWhEczvLvCH81+FO
+    YTAfBgNVHSMEGDAWgBRLNwYkiwbZJWhEczvLvCH81+FOYTAPBgNVHRMBAf8EBTAD
+    AQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAh8X1bp2JDrcmDRPKW0+yZ3CqNlcOTAHEr
+    /Modl6PsjAmsRkc/PAXIdnjLl2ZPF3b2wTQ/FwvgQdjKXB3zqWugPz4eyhQ+S4qr
+    IXenUscPFBYAvAfXLiarjl+fAQKsKAEYJcYOSZe9dn+jOidIT6hG9Pist3wKs9+v
+    4ixf/AaAME6vNYGW8pEhLNVoJd0J/nPYa2bYQpYSMRsFE0RON4Sc4maVT9LphBei
+    HDdpLxAHc92OerNhBwVQRSq/QqxTTHotcVE5HwYksQy5H0YbEElBESrJ59cRfrO8
+    yR4A7QwF/TZzXjT9H+dlnJ7lo+/NE/+RPwRAqYLzSTYi/h7Q0npl
+    -----END CERTIFICATE-----
+    # root CA cert of the cluster issuer in cert-manager, if not a well-known CA
+  habror-ca.pem: |
+    -----BEGIN CERTIFICATE-----
+    MIIFsTCCA5mgAwIBAgIUSPcih3pZhoz14WlFJ1epieB5VuwwDQYJKoZIhvcNAQEN
+    BQAwaDELMAkGA1UEBhMCSU4xCzAJBgNVBAgMAktBMQwwCgYDVQQHDANCTFIxDDAK
+    BgNVBAoMA1ZNVzEOMAwGA1UECwwFTUFNQkcxIDAeBgNVBAMMF2hsLWhhcmJvci5o
+    b21lbGFiLnRhbnp1MB4XDTIzMDYwNjE2MzQ1NVoXDTMzMDYwMzE2MzQ1NVowaDEL
+    MAkGA1UEBhMCSU4xCzAJBgNVBAgMAktBMQwwCgYDVQQHDANCTFIxDDAKBgNVBAoM
+    A1ZNVzEOMAwGA1UECwwFTUFNQkcxIDAeBgNVBAMMF2hsLWhhcmJvci5ob21lbGFi
+    LnRhbnp1MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuk+RafZ6zBZf
+    LFT16zKnXs9glOqkhIJG3Qwiq278YgKbDkhHeURD7SSBm/pQpJkN/r9RWioYPnEy
+    sMytiLmxblf42dMX6TJIuLtpwo6kL+WYFEXP8MKMi8Kg8M1LYPQkKEZu4pob/3wF
+    x60lMoZmxk1FPvvsRffvitHIyjefJRUNVrCUNFrllqmQwz/N5RDt8MNPdH5qbSrB
+    GWTsNk2Yrc7OFL0ChFd/B1TLX5Usl3oEHqwYNB8p0igt0Lj7I2TFxC4VDq6dPEcC
+    uchT2nVpnMBp9M730XB4Djd8ZgGIWi7sjm04Tpb/wkeM8BljPcJ435QwjR4u2dJQ
+    lCTMp745NZPtZ1ATcfXxt9r/7k8aUGKem6xMx9IALsujucPjhnr+K/9QtenASFFU
+    9OJSECt6nrUuBq7u4eKds3tKQ+HePf8ft66OnQ0bD4KFz/0pb+USwP3GZjtibgy6
+    /jvqK3+/MmUMW/ZWjeq8zcI2CoB7uue5okrGI3cgAulrcIvpzQPOH1W/g0YwjUs+
+    1bsdR3eX0LLrgYyAbpzjBlGjpReJdHNSNGnNGJrnq1OuXsyGVZVmDgJEm2O4boUJ
+    IV1P+Byhofey2dh5k8k++t+nnw/FEN1ir6eaSs33je4D7/bWkXZ8qqhqCfJQz3eu
+    cJvynbzhzGfV584WH0OsvoQzMx6HgLECAwEAAaNTMFEwHQYDVR0OBBYEFDEWl+ph
+    ZzEC3XD/XomtWsJwKWTgMB8GA1UdIwQYMBaAFDEWl+phZzEC3XD/XomtWsJwKWTg
+    MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQENBQADggIBAG0yk3i7M5FuMSOw
+    +ywV+hiRCZWl5hYhjsOB5fKt+/ngMZ2G+MtXjiJzTqzceQctEun5cymWY83Q3YHW
+    aauHCu3ygsg2MpWlLQiGZvTVqrQfc5024m3pScn+NTbcCUUhAcG+elxmQhKF4BnZ
+    hETkqR2Mo4PUL6kNlNBib/UtDUQGkvOLIt4fd06tp8PbqvEg8fdUaCxc8qZunBWF
+    aoLxlqRFIaPAyQQtIfqPd+HO8CFyfMyYOm7q//DPDmFebpE98Hg62M017og14fYz
+    3nbarH6+nuQUIdcNUWOc0IJk5Ry5Ssk8xlJeACgqoG3JIUYLWoy5qEaVzIXOusFq
+    uwO7dzPhrLci3VTdGJe8GSoRfzdM+wB6Le35NmpasgK2Fx4NxLwcXl293Xbsfyil
+    EktnrDBG9xfepKMt++iFYd22JrL4kbHPacFOeKzwNlbm8qqfRMr8SlTZi9qYxO7P
+    DPS3QwOvGtLIoz5inkH7WtkzKZm3VkyniH7wzHAv5xRAx0vHq3jpWCSxPldvuykr
+    6yBIVGtfpOHGwZBNdW0cPGejJtKLzWW/uExTZQ/fLkeI7qI9vCRF8Ic0KvJar9pH
+    1ZZaSMHqmKS9Wmc9sW6TPdXCRwAZHMkl5VPSvb1MJUhGTUHcGu5hMoUiVUx975Ql
+    v84oKMqo1ajqLNPFA2banVVXNGDQ
+    -----END CERTIFICATE-----
+    # root CA cert of Harbor, if not a well-known CA and if different from the local-ca.pem
+alertmanager: # needed only if you want to turn on alerting
+  criticalAlertReceiver:
+    slack_configs:
+    - send_resolved: false
+      api_url: https://hooks.slack.com/services/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
+      channel: ' #tmc-test'
+telemetry:
+  ceipOptIn: true
+    ## eanNumber: " "  # if EAN is available
+  ceipAgreement: true
