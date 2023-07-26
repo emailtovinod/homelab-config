@@ -1,0 +1,115 @@
+apiVersion: run.tanzu.vmware.com/v1alpha3
+kind: ClusterBootstrap
+metadata:
+  annotations:
+    tkg.tanzu.vmware.com/add-missing-fields-from-tkr: v1.25.7---vmware.2-tkg.1
+  name: tap-ag
+  namespace: tap-ag
+spec:
+  additionalPackages:
+  - refName: metrics-server*
+  - refName: secretgen-controller*
+  - refName: pinniped*
+  kapp:
+    refName: kapp-controller*
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tap-ag
+  namespace: tap-ag
+stringData:
+  password: VMware1!
+  username: Administrator@homelab.tanzu
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  annotations:
+    osInfo: ubuntu,20.04,amd64
+    tkg/plan: dev
+  labels:
+    role: hl-avi
+    tkg.tanzu.vmware.com/cluster-name: tap-ag
+  name: tap-ag
+  namespace: tap-ag
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 100.96.0.0/11
+    services:
+      cidrBlocks:
+      - 100.64.0.0/13
+  topology:
+    class: tkg-vsphere-default-v1.0.0
+    controlPlane:
+      metadata:
+        annotations:
+          run.tanzu.vmware.com/resolve-os-image: image-type=ova,os-name=ubuntu
+      replicas: 1
+    variables:
+    - name: cni
+      value: antrea
+    - name: controlPlaneCertificateRotation
+      value:
+        activate: true
+        daysBefore: 90
+    - name: imageRepository
+      value:
+        host: hl-harbor.homelab.tanzu/tkg-22-offline
+    - name: auditLogging
+      value:
+        enabled: true
+    - name: trust
+      value:
+        additionalTrustedCAs:
+        - data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzVENDQTVtZ0F3SUJBZ0lVU1BjaWgzcFpob3oxNFdsRkoxZXBpZUI1VnV3d0RRWUpLb1pJaHZjTkFRRU4KQlFBd2FERUxNQWtHQTFVRUJoTUNTVTR4Q3pBSkJnTlZCQWdNQWt0Qk1Rd3dDZ1lEVlFRSERBTkNURkl4RERBSwpCZ05WQkFvTUExWk5WekVPTUF3R0ExVUVDd3dGVFVGTlFrY3hJREFlQmdOVkJBTU1GMmhzTFdoaGNtSnZjaTVvCmIyMWxiR0ZpTG5SaGJucDFNQjRYRFRJek1EWXdOakUyTXpRMU5Wb1hEVE16TURZd016RTJNelExTlZvd2FERUwKTUFrR0ExVUVCaE1DU1U0eEN6QUpCZ05WQkFnTUFrdEJNUXd3Q2dZRFZRUUhEQU5DVEZJeEREQUtCZ05WQkFvTQpBMVpOVnpFT01Bd0dBMVVFQ3d3RlRVRk5Ra2N4SURBZUJnTlZCQU1NRjJoc0xXaGhjbUp2Y2k1b2IyMWxiR0ZpCkxuUmhibnAxTUlJQ0lqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FnOEFNSUlDQ2dLQ0FnRUF1aytSYWZaNnpCWmYKTEZUMTZ6S25YczlnbE9xa2hJSkczUXdpcTI3OFlnS2JEa2hIZVVSRDdTU0JtL3BRcEprTi9yOVJXaW9ZUG5FeQpzTXl0aUxteGJsZjQyZE1YNlRKSXVMdHB3bzZrTCtXWUZFWFA4TUtNaThLZzhNMUxZUFFrS0VadTRwb2IvM3dGCng2MGxNb1pteGsxRlB2dnNSZmZ2aXRISXlqZWZKUlVOVnJDVU5GcmxscW1Rd3ovTjVSRHQ4TU5QZEg1cWJTckIKR1dUc05rMllyYzdPRkwwQ2hGZC9CMVRMWDVVc2wzb0VIcXdZTkI4cDBpZ3QwTGo3STJURnhDNFZEcTZkUEVjQwp1Y2hUMm5WcG5NQnA5TTczMFhCNERqZDhaZ0dJV2k3c2ptMDRUcGIvd2tlTThCbGpQY0o0MzVRd2pSNHUyZEpRCmxDVE1wNzQ1TlpQdFoxQVRjZlh4dDlyLzdrOGFVR0tlbTZ4TXg5SUFMc3VqdWNQamhucitLLzlRdGVuQVNGRlUKOU9KU0VDdDZuclV1QnE3dTRlS2RzM3RLUStIZVBmOGZ0NjZPblEwYkQ0S0Z6LzBwYitVU3dQM0daanRpYmd5NgovanZxSzMrL01tVU1XL1pXamVxOHpjSTJDb0I3dXVlNW9rckdJM2NnQXVscmNJdnB6UVBPSDFXL2cwWXdqVXMrCjFic2RSM2VYMExMcmdZeUFicHpqQmxHanBSZUpkSE5TTkduTkdKcm5xMU91WHN5R1ZaVm1EZ0pFbTJPNGJvVUoKSVYxUCtCeWhvZmV5MmRoNWs4aysrdCtubncvRkVOMWlyNmVhU3MzM2plNEQ3L2JXa1haOHFxaHFDZkpRejNldQpjSnZ5bmJ6aHpHZlY1ODRXSDBPc3ZvUXpNeDZIZ0xFQ0F3RUFBYU5UTUZFd0hRWURWUjBPQkJZRUZERVdsK3BoClp6RUMzWEQvWG9tdFdzSndLV1RnTUI4R0ExVWRJd1FZTUJhQUZERVdsK3BoWnpFQzNYRC9Yb210V3NKd0tXVGcKTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTkJRQURnZ0lCQUcweWszaTdNNUZ1TVNPdworeXdWK2hpUkNaV2w1aFloanNPQjVmS3QrL25nTVoyRytNdFhqaUp6VHF6Y2VRY3RFdW41Y3ltV1k4M1EzWUhXCmFhdUhDdTN5Z3NnMk1wV2xMUWlHWnZUVnFyUWZjNTAyNG0zcFNjbitOVGJjQ1VVaEFjRytlbHhtUWhLRjRCbloKaEVUa3FSMk1vNFBVTDZrTmxOQmliL1V0RFVRR2t2T0xJdDRmZDA2dHA4UGJxdkVnOGZkVWFDeGM4cVp1bkJXRgphb0x4bHFSRklhUEF5UVF0SWZxUGQrSE84Q0Z5Zk15WU9tN3EvL0RQRG1GZWJwRTk4SGc2Mk0wMTdvZzE0Zll6CjNuYmFySDYrbnVRVUlkY05VV09jMElKazVSeTVTc2s4eGxKZUFDZ3FvRzNKSVVZTFdveTVxRWFWeklYT3VzRnEKdXdPN2R6UGhyTGNpM1ZUZEdKZThHU29SZnpkTSt3QjZMZTM1Tm1wYXNnSzJGeDROeEx3Y1hsMjkzWGJzZnlpbApFa3RuckRCRzl4ZmVwS010KytpRllkMjJKckw0a2JIUGFjRk9lS3p3TmxibThxcWZSTXI4U2xUWmk5cVl4TzdQCkRQUzNRd092R3RMSW96NWlua0g3V3RrektabTNWa3luaUg3d3pIQXY1eFJBeDB2SHEzanBXQ1N4UGxkdnV5a3IKNnlCSVZHdGZwT0hHd1pCTmRXMGNQR2VqSnRLTHpXVy91RXhUWlEvZkxrZUk3cUk5dkNSRjhJYzBLdkphcjlwSAoxWlphU01IcW1LUzlXbWM5c1c2VFBkWENSd0FaSE1rbDVWUFN2YjFNSlVoR1RVSGNHdTVoTW9VaVZVeDk3NVFsCnY4NG9LTXFvMWFqcUxOUEZBMmJhblZWWE5HRFEKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+          name: imageRepository
+    - name: podSecurityStandard
+      value:
+        audit: baseline
+        deactivated: false
+        warn: baseline
+    - name: apiServerEndpoint
+      value: ""
+    - name: aviAPIServerHAProvider
+      value: true
+    - name: vcenter
+      value:
+        cloneMode: fullClone
+        datacenter: /hldc
+        datastore: /hldc/datastore/bronze
+        folder: /hldc/vm/tkg-fl
+        network: /hldc/network/VM Network
+        resourcePool: /hldc/host/hlcl/Resources/tkg-pool
+        server: 10.0.100.101
+        storagePolicyID: ""
+        template: /hldc/vm/ubuntu-2004-efi-kube-v1.25.7+vmware.2
+        tlsThumbprint: ""
+    - name: user
+      value:
+        sshAuthorizedKeys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC6bteo+n6UoNQJg+iJD4U/pQKXYvoXid9+dnDfCwD+VFlWmJPUU5YhS/BtCZ0TMbokU4eYZOtDmPb09SoEKSqXJkPs8/mpw88ElxT6ob1zDi3+segpuYyjRYt3XwjzIHyNgDynIR3OwZJO4o4E8s/OOAnrBxvVm5zbPAWqrb9lVx7CJ7h2Cl7+4v9HHokwYPIAWNyuq4FWsrrXHMwkVbny++bLP6abdq3QXwbOke3Jl/rA5RUAy44d+6SWMf1hK5NLIWXIDNaaR25T+Jg5z2FRs92+7AAxaQHaSfhJLWK4udaZkmzX4lWj2dLlzKuiivx67v2NRNcywB7vMx2frEkLe8w2WZUo/emMatZtkTZ4RZ/udS8hY/ahy8lkk8z0opk5vy7lwRHTZhfkMBojjofc2+ppIiz2uDjz6R6QWjNJFa9rnBBSYpKqSR/ldxErAbsuhmpd8mWxN/3lmw4Hhmrsb/IYs0dv5qTBTE/p75nnMkfri2co++iNwwX8VpqEeMe1V0l0pD5IMNol9g5M5OQoR4/cm5kDOnWTo9BSJKx2JWLfNsLPVHll1zGtklnp4+G4V6ciRM9g3BmSxxSfjNcLZY7UG4rReQK/cQluR2uospoLKaMy+EKw4LrjGnEcBu9OabggPBZp6vIQBtqYjPhLXlCSmRTKwWeiZNTV2+qnvQ==
+    - name: controlPlane
+      value:
+        machine:
+          diskGiB: 40
+          memoryMiB: 8192
+          numCPUs: 4
+    - name: worker
+      value:
+        count: 2
+        machine:
+          diskGiB: 80
+          memoryMiB: 16384
+          numCPUs: 8
+    version: v1.25.7+vmware.2-tkg.1
+    workers:
+      machineDeployments:
+      - class: tkg-worker
+        metadata:
+          annotations:
+            run.tanzu.vmware.com/resolve-os-image: image-type=ova,os-name=ubuntu
+        name: md-0
+        replicas: 2
